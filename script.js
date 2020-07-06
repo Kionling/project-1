@@ -1,11 +1,14 @@
 function showActivities(){
     var table = new Tabulator("#activity-list", {
         height:205, 
-        data: allActivities, 
+        data: allActivities.map(function(activity){
+            activity.formattedTime = formatTime(activity.time)
+            return activity;
+        } ), 
         layout:"fitColumns", 
         columns:[
             {title:"Activity", field:"name", hozAlign:"center"},
-            {title:"Time", field:"time", hozAlign:"center"}
+            {title:"Time", field:"formattedTime", hozAlign:"center"}
             
         ],
     
@@ -15,6 +18,35 @@ function showActivities(){
 }
 
 
+function formatTime(time) {
+    var timeMap = {
+        0: "12AM",
+        1: "1AM",
+        2: "2AM",
+        3: "3AM",
+        4: "4AM",
+        5: "5AM",
+        6: "6AM",
+        7: "7AM",
+        8: "8AM",
+        9: "9AM",
+        10: "10AM",
+        11: "11AM",
+        12: "12PM",
+        13: "1PM",
+        14: "2PM",
+        15: "3PM",
+        16: "4PM",
+        17: "5PM",
+        18: "6PM",
+        19: "7PM",
+        20: "8PM",
+        21: "9PM",
+        22: "10PM",
+        23: "11PM"
+    };
+    return timeMap[time];
+}
 
 
 
@@ -63,13 +95,17 @@ $(document).ready(function (){
                 }
             }
             $.ajax(settings).done(function (response) {
+                console.log(response);
                 var songIndex = Math.floor(Math.random()*25)
                 console.log(songIndex);
+                console.log(response.data[songIndex])
                 var song= {
                     title: response.data[songIndex].title,
                     artist: response.data[songIndex].artist.name,
                     album: response.data[songIndex].album.title, 
-                    duration: response.data[songIndex].duration
+                    duration: response.data[songIndex].duration,
+                    songId: response.data[songIndex].id
+
                 }
                 console.log(song)
                 songs.push(JSON.stringify(song));
@@ -93,7 +129,7 @@ $(document).ready(function (){
             allActivities.push(activity);
 
             showActivities();
-            
+
             console.log(activity);
             //storing the stringified version of allActivities in parsedAllActivities
             var parsedAllActivities = JSON.stringify(allActivities);
